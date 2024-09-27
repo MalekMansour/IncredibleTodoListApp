@@ -2,16 +2,15 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-project.ext.react = [
-    enableHermes: false  // Set to true if you want to enable Hermes
-]
+def enableProguardInReleaseBuilds = false // Declare this variable properly
 
 android {
+    compileSdk rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.incredibletodolistapp"
+    
     defaultConfig {
         applicationId "com.incredibletodolistapp"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -19,6 +18,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -27,26 +27,29 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
             signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled enableProguardInReleaseBuilds // Use the declared variable
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-
-    // Reference the correct property here
-    if (project.ext.react.get("enableHermes", false)) {
+    
+    if (project.hasProperty('hermesEnabled') && hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
-        implementation jscFlavor
+        implementation 'org.webkit:android-jsc:+'
     }
+}
+
+react {
+    autolinkLibrariesWithApp()
 }
