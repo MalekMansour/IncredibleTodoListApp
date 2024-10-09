@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, View, TextInput, Button, StyleSheet } from 'react-native';
-import ToDoList from './ToDoList';  // Import ToDoList
+import ToDoList from './ToDoList';  
 
 function App() {
   return (
